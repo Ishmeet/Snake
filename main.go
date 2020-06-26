@@ -81,6 +81,9 @@ type Game struct {
 	snakeImage             *ebiten.Image
 	snakeSkin              *ebiten.Image
 	snakeHead              *ebiten.Image
+	snakeHeadDown          *ebiten.Image
+	snakeHeadUp            *ebiten.Image
+	snakeHeadRight         *ebiten.Image
 	snakeMouth             *ebiten.Image
 	apple                  *ebiten.Image
 }
@@ -365,22 +368,25 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
 				screen.DrawImage(g.snakeMouth, op)
 			} else {
+				switch g.moveDirection {
+
+				}
 				w, h := g.snakeHead.Size()
 				op := &ebiten.DrawImageOptions{}
 				op.GeoM.Scale(float64(10)/float64(w), float64(10)/float64(h))
 				op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
 				screen.DrawImage(g.snakeHead, op)
 			}
+		} else {
+			w, h := g.snakeSkin.Size()
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Scale(float64(10)/float64(w), float64(10)/float64(h))
+			op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
+			// if g.nearapple {
+			// 	op.ColorM.Scale(0xFF, 0x00, 0x00, 0x08)
+			// }
+			screen.DrawImage(g.snakeSkin, op)
 		}
-		w, h := g.snakeSkin.Size()
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Scale(float64(10)/float64(w), float64(10)/float64(h))
-		op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
-		// if g.nearapple {
-		// 	op.ColorM.Scale(0xFF, 0x00, 0x00, 0x08)
-		// }
-		screen.DrawImage(g.snakeSkin, op)
-
 	}
 
 	// applew, appleh := emptyImage.Size()
@@ -512,6 +518,9 @@ func main() {
 	g.snakeImage, _, _ = ebitenutil.NewImageFromFile("snake2.jpg", ebiten.FilterDefault)
 	g.snakeSkin, _, _ = ebitenutil.NewImageFromFile("skin.png", ebiten.FilterLinear)
 	g.snakeHead, _, _ = ebitenutil.NewImageFromFile("snakeHead.png", ebiten.FilterLinear)
+	g.snakeHeadDown, _, _ = ebitenutil.NewImageFromFile("snakeHeadDown.png", ebiten.FilterLinear)
+	g.snakeHeadUp, _, _ = ebitenutil.NewImageFromFile("snakeHeadUp.png", ebiten.FilterLinear)
+	g.snakeHeadRight, _, _ = ebitenutil.NewImageFromFile("snakeHeadRight.png", ebiten.FilterLinear)
 	g.snakeMouth, _, _ = ebitenutil.NewImageFromFile("snakeMouth.png", ebiten.FilterLinear)
 	g.apple, _, _ = ebitenutil.NewImageFromFile("rabbit.png", ebiten.FilterLinear)
 	// ===========================
