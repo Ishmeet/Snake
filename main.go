@@ -5,6 +5,7 @@ import (
 	"image/color"
 	_ "image/jpeg"
 	"log"
+	"math"
 	"math/rand"
 	"os"
 
@@ -22,6 +23,7 @@ const (
 	sampleRate          = 44100
 	introLengthInSecond = 5
 	loopLengthInSecond  = 4
+	maxAngle            = 256
 )
 
 const (
@@ -35,6 +37,23 @@ var (
 var (
 	emptyImage *ebiten.Image
 )
+
+// Sprite ...
+type Sprite struct {
+	imageWidth  int
+	imageHeight int
+	x           int
+	y           int
+	vx          int
+	vy          int
+	angle       int
+}
+
+// Sprites ...
+type Sprites struct {
+	sprites []*Sprite
+	num     int
+}
 
 // Turn ...
 type Turn struct {
@@ -86,11 +105,37 @@ type Game struct {
 	snakeHeadRight         *ebiten.Image
 	snakeMouth             *ebiten.Image
 	apple                  *ebiten.Image
+	spriteImage            *ebiten.Image
+	s                      Sprites
 }
 
 func init() {
 	emptyImage, _ = ebiten.NewImage(1, 1, ebiten.FilterDefault)
 	_ = emptyImage.Fill(color.White)
+}
+
+// Update ...
+func (s *Sprite) Update() {
+	s.x += s.vx
+	s.y += s.vy
+	if s.x < 0 {
+		s.x = -s.x
+		s.vx = -s.vx
+	} else if mx := screenWidth - s.imageWidth; mx <= s.x {
+		s.x = 2*mx - s.x
+		s.vx = -s.vx
+	}
+	if s.y < 0 {
+		s.y = -s.y
+		s.vy = -s.vy
+	} else if my := screenHeight - s.imageHeight; my <= s.y {
+		s.y = 2*my - s.y
+		s.vy = -s.vy
+	}
+	s.angle++
+	if s.angle == maxAngle {
+		s.angle = 0
+	}
 }
 
 func (g *Game) collision() bool {
@@ -317,6 +362,11 @@ func (g *Game) Update(screen *ebiten.Image) error {
 		}
 		g.reset()
 	}
+
+	for i := 0; i < g.s.num; i++ {
+		g.s.sprites[i].Update()
+	}
+
 	g.updateTimer()
 
 	return nil
@@ -401,6 +451,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	op.GeoM.Translate((screenWidth/2)+float64(g.AppleX), (screenHeight/2)+float64(g.AppleY))
 	screen.DrawImage(g.apple, op)
 
+	if true {
+		w, h := g.spriteImage.Size()
+		for i := 0; i < g.s.num; i++ {
+			s := g.s.sprites[i]
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Reset()
+			op.GeoM.Translate(-float64(w)/2, -float64(h)/2)
+			op.GeoM.Rotate(2 * math.Pi * float64(s.angle) / maxAngle)
+			op.GeoM.Translate(float64(w)/2, float64(h)/2)
+			op.GeoM.Translate(float64(s.x), float64(s.y))
+			screen.DrawImage(g.spriteImage, op)
+		}
+	}
 }
 
 func backgroundColor(screen *ebiten.Image) {
@@ -506,6 +569,40 @@ func main() {
 	g.apple, _, _ = ebitenutil.NewImageFromFile("rabbit.png", ebiten.FilterLinear)
 	// ===========================
 
+	// Sprites ===========================
+	// img, _, err := image.Decode(bytes.NewReader(images.Ebiten_png))
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// origEbitenImage, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+
+	// w, h := origEbitenImage.Size()
+	g.spriteImage, _ = ebiten.NewImage(1, 2, ebiten.FilterDefault)
+	// op.GeoM.Translate(0, 0)
+	// op.ColorM.Scale(62, 66, 46, 0.1)
+	// _ = screen.DrawImage(emptyImage, op)
+
+	op := &ebiten.DrawImageOptions{}
+	op.ColorM.Scale(1, 1, 1, 0.5)
+	g.spriteImage.DrawImage(emptyImage, op)
+	g.s.sprites = make([]*Sprite, 100)
+	g.s.num = 10
+	for i := range g.s.sprites {
+		w, h := g.spriteImage.Size()
+		x, y := rand.Intn(screenWidth-w), rand.Intn(screenHeight-h)
+		vx, vy := 2*rand.Intn(2)-1, 2*rand.Intn(2)-1
+		a := rand.Intn(maxAngle)
+		g.s.sprites[i] = &Sprite{
+			imageWidth:  w,
+			imageHeight: h,
+			x:           x,
+			y:           y,
+			vx:          vx,
+			vy:          vy,
+			angle:       a,
+		}
+	}
+	// ===========================
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}
