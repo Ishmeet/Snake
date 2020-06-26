@@ -350,16 +350,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	for i, v := range g.scalesLoc {
-		// ew, eh := emptyImage.Size()
-		// op := &ebiten.DrawImageOptions{}
-		// op.GeoM.Scale(float64(10)/float64(ew), float64(10)/float64(eh))
-		// op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
-		// if g.nearapple {
-		// 	op.ColorM.Scale(210, 75, 172, 1)
-		// } else {
-		// 	op.ColorM.Scale(0xFF, 0x00, 0x00, 0x08)
-		// }
-		// _ = screen.DrawImage(emptyImage, op)
 		if i == 0 {
 			if g.nearapple {
 				w, h := g.snakeMouth.Size()
@@ -369,33 +359,41 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				screen.DrawImage(g.snakeMouth, op)
 			} else {
 				switch g.moveDirection {
-
+				case 1:
+					w, h := g.snakeHead.Size()
+					op := &ebiten.DrawImageOptions{}
+					op.GeoM.Scale(float64(10)/float64(w), float64(10)/float64(h))
+					op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
+					screen.DrawImage(g.snakeHead, op)
+				case 2:
+					w, h := g.snakeHeadRight.Size()
+					op := &ebiten.DrawImageOptions{}
+					op.GeoM.Scale(float64(10)/float64(w), float64(10)/float64(h))
+					op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
+					screen.DrawImage(g.snakeHeadRight, op)
+				case 3:
+					w, h := g.snakeHeadDown.Size()
+					op := &ebiten.DrawImageOptions{}
+					op.GeoM.Scale(float64(10)/float64(w), float64(10)/float64(h))
+					op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
+					screen.DrawImage(g.snakeHeadDown, op)
+				case 4:
+					w, h := g.snakeHeadUp.Size()
+					op := &ebiten.DrawImageOptions{}
+					op.GeoM.Scale(float64(10)/float64(w), float64(10)/float64(h))
+					op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
+					screen.DrawImage(g.snakeHeadUp, op)
 				}
-				w, h := g.snakeHead.Size()
-				op := &ebiten.DrawImageOptions{}
-				op.GeoM.Scale(float64(10)/float64(w), float64(10)/float64(h))
-				op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
-				screen.DrawImage(g.snakeHead, op)
+
 			}
 		} else {
 			w, h := g.snakeSkin.Size()
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Scale(float64(10)/float64(w), float64(10)/float64(h))
 			op.GeoM.Translate((screenWidth/2)+float64(v.X), (screenHeight/2)+float64(v.Y))
-			// if g.nearapple {
-			// 	op.ColorM.Scale(0xFF, 0x00, 0x00, 0x08)
-			// }
 			screen.DrawImage(g.snakeSkin, op)
 		}
 	}
-
-	// applew, appleh := emptyImage.Size()
-
-	// opapple := &ebiten.DrawImageOptions{}
-	// opapple.GeoM.Scale(10/float64(applew), 10/float64(appleh))
-	// opapple.GeoM.Translate((screenWidth/2)+float64(g.AppleX), (screenHeight/2)+float64(g.AppleY))
-	// opapple.ColorM.Scale(51, 204, 0, 0.2)
-	// _ = screen.DrawImage(emptyImage, opapple)
 
 	w, h := g.apple.Size()
 	op := &ebiten.DrawImageOptions{}
@@ -484,23 +482,6 @@ func (g *Game) setupAudio() error {
 }
 
 func main() {
-	// Decode image from a byte slice instead of a file so that
-	// this example works in any working directory.
-	// If you want to use a file, there are some options:
-	// 1) Use os.Open and pass the file to the image decoder.
-	//    This is a very regular way, but doesn't work on browsers.
-	// 2) Use ebitenutil.OpenFile and pass the file to the image decoder.
-	//    This works even on browsers.
-	// 3) Use ebitenutil.NewImageFromFile to create an ebiten.Image directly from a file.
-	//    This also works on browsers.
-	// img, _, err := image.Decode(bytes.NewReader(images.Gophers_jpg))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// gophersImage, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
-
-	//gophersImage, _, _ = ebitenutil.NewImageFromFile("ishmeet.jpg", ebiten.FilterLinear)
-	//gophersImage.Size()
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Hungry-Snake")
 	// Game config ==========================
