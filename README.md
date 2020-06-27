@@ -1,11 +1,12 @@
 # 2D Snake
 This is the popular snake game. Created on golang using ebiten engine.
 
-![alt text](https://github.com/Ishmeet/Snake/blob/master/Screenshot%202020-06-26%20at%201.21.41%20AM.png)
+![alt text](https://github.com/Ishmeet/Snake/blob/master/Snake-2D.png)
 
 ## Supported OS
 
-Mac
+Mac.
+
 There is a plan to host it as web application on a server.
 
 ## Installation
@@ -15,7 +16,7 @@ There is a plan to host it as web application on a server.
 - Run the file using 
   `./Snake` 
 Or
-- Install dependencies 
+- Install dependencies using 
   `go get ...`
 - Run the file using
   `go run main.go`
@@ -25,3 +26,4 @@ Or
 - Collision detection
 - 5 Levels of difficulty
 - Score
+- Sprites
