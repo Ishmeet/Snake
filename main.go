@@ -97,6 +97,10 @@ type Game struct {
 	audioPlayerCrunch      *audio.Player
 	audioContextBackground *audio.Context
 	audioPlayerBackground  *audio.Player
+	a5NotePlayer           *audio.Player
+	b5NotePlayer           *audio.Player
+	c5NotePlayer           *audio.Player
+	d5NotePlayer           *audio.Player
 	snakeImage             *ebiten.Image
 	snakeSkin              *ebiten.Image
 	snakeHead              *ebiten.Image
@@ -300,17 +304,33 @@ func (g *Game) Update(screen *ebiten.Image) error {
 		if g.moveDirection != 2 {
 			g.moveDirection = 1
 		}
+		if g.soundEnable {
+			g.a5NotePlayer.Rewind()
+			g.a5NotePlayer.Play()
+		}
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyRight) {
 		if g.moveDirection != 1 {
 			g.moveDirection = 2
+		}
+		if g.soundEnable {
+			g.d5NotePlayer.Rewind()
+			g.d5NotePlayer.Play()
 		}
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyDown) {
 		if g.moveDirection != 4 {
 			g.moveDirection = 3
 		}
+		if g.soundEnable {
+			g.b5NotePlayer.Rewind()
+			g.b5NotePlayer.Play()
+		}
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyUp) {
 		if g.moveDirection != 3 {
 			g.moveDirection = 4
+		}
+		if g.soundEnable {
+			g.c5NotePlayer.Rewind()
+			g.c5NotePlayer.Play()
 		}
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
 		g.reset()
@@ -520,6 +540,34 @@ func (g *Game) setupAudio() error {
 		log.Fatal(err)
 	}
 
+	// Music notes ==================================
+	A5, err := os.Open("A5vH16.wav")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	a5, err := wav.Decode(g.audioContext, A5)
+	if err != nil {
+		log.Fatal(err)
+	}
+	g.a5NotePlayer, err = audio.NewPlayer(g.audioContext, a5)
+	if err != nil {
+		log.Fatal(err)
+	}
+	g.a5NotePlayer.SetVolume(0.1)
+	B5, _ := os.Open("B5vH16.wav")
+	b5, _ := wav.Decode(g.audioContext, B5)
+	g.b5NotePlayer, _ = audio.NewPlayer(g.audioContext, b5)
+	g.b5NotePlayer.SetVolume(0.1)
+	C5, _ := os.Open("C5vH16.wav")
+	c5, _ := wav.Decode(g.audioContext, C5)
+	g.c5NotePlayer, _ = audio.NewPlayer(g.audioContext, c5)
+	g.c5NotePlayer.SetVolume(0.1)
+	D5, _ := os.Open("D#5vH16.wav")
+	d5, _ := wav.Decode(g.audioContext, D5)
+	g.d5NotePlayer, _ = audio.NewPlayer(g.audioContext, d5)
+	g.d5NotePlayer.SetVolume(0.1)
+	// ==================================
 	// Infinite loop background music ============================
 	f3, err := os.Open("ragtime.ogg")
 	if err != nil {
@@ -570,18 +618,7 @@ func main() {
 	// ===========================
 
 	// Sprites ===========================
-	// img, _, err := image.Decode(bytes.NewReader(images.Ebiten_png))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// origEbitenImage, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
-
-	// w, h := origEbitenImage.Size()
 	g.spriteImage, _ = ebiten.NewImage(1, 2, ebiten.FilterDefault)
-	// op.GeoM.Translate(0, 0)
-	// op.ColorM.Scale(62, 66, 46, 0.1)
-	// _ = screen.DrawImage(emptyImage, op)
-
 	op := &ebiten.DrawImageOptions{}
 	op.ColorM.Scale(1, 1, 1, 0.5)
 	g.spriteImage.DrawImage(emptyImage, op)
