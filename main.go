@@ -7,7 +7,6 @@ import (
 	"log"
 	"math"
 	"math/rand"
-	"os"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/audio"
@@ -89,6 +88,7 @@ type Game struct {
 	turn2                  map[int64]*Turn
 	turnKey                int64
 	Score                  int64
+	bestScore              int64
 	Level                  int8
 	nearapple              bool
 	soundEnable            bool
@@ -253,12 +253,12 @@ func (g *Game) Update(screen *ebiten.Image) error {
 
 	if g.moveSnakeTimer() {
 		if g.selfCollision() {
-			if g.soundEnable {
-				g.audioPlayer.Rewind()
-				g.audioPlayer.Play()
-			} else {
-				g.audioPlayer.Pause()
-			}
+			// if g.soundEnable {
+			g.audioPlayer.Rewind()
+			g.audioPlayer.Play()
+			// } else {
+			// 	g.audioPlayer.Pause()
+			// }
 			g.reset()
 		}
 
@@ -291,47 +291,50 @@ func (g *Game) Update(screen *ebiten.Image) error {
 				g.Score += 10
 				g.Level = 1
 			}
-			if g.soundEnable {
-				g.audioPlayerCrunch.Rewind()
-				g.audioPlayerCrunch.Play()
-			} else {
-				g.audioPlayerCrunch.Pause()
+			if g.bestScore < g.Score {
+				g.bestScore = g.Score
 			}
+			// if g.soundEnable {
+			g.audioPlayerCrunch.Rewind()
+			g.audioPlayerCrunch.Play()
+			// } else {
+			// 	g.audioPlayerCrunch.Pause()
+			// }
 		}
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyLeft) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyLeft) || inpututil.IsKeyJustPressed(ebiten.KeyJ) {
 		if g.moveDirection != 2 {
 			g.moveDirection = 1
 		}
-		if g.soundEnable {
-			g.a5NotePlayer.Rewind()
-			g.a5NotePlayer.Play()
-		}
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyRight) {
+		// if g.soundEnable {
+		// 	g.a5NotePlayer.Rewind()
+		// 	g.a5NotePlayer.Play()
+		// }
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyRight) || inpututil.IsKeyJustPressed(ebiten.KeyL) {
 		if g.moveDirection != 1 {
 			g.moveDirection = 2
 		}
-		if g.soundEnable {
-			g.d5NotePlayer.Rewind()
-			g.d5NotePlayer.Play()
-		}
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyDown) {
+		// if g.soundEnable {
+		// 	g.d5NotePlayer.Rewind()
+		// 	g.d5NotePlayer.Play()
+		// }
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyDown) || inpututil.IsKeyJustPressed(ebiten.KeyK) {
 		if g.moveDirection != 4 {
 			g.moveDirection = 3
 		}
-		if g.soundEnable {
-			g.b5NotePlayer.Rewind()
-			g.b5NotePlayer.Play()
-		}
-	} else if inpututil.IsKeyJustPressed(ebiten.KeyUp) {
+		// if g.soundEnable {
+		// 	g.b5NotePlayer.Rewind()
+		// 	g.b5NotePlayer.Play()
+		// }
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyUp) || inpututil.IsKeyJustPressed(ebiten.KeyI) {
 		if g.moveDirection != 3 {
 			g.moveDirection = 4
 		}
-		if g.soundEnable {
-			g.c5NotePlayer.Rewind()
-			g.c5NotePlayer.Play()
-		}
+		// if g.soundEnable {
+		// 	g.c5NotePlayer.Rewind()
+		// 	g.c5NotePlayer.Play()
+		// }
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
 		g.reset()
 	} else if inpututil.IsKeyJustPressed(ebiten.KeyM) {
@@ -408,9 +411,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	} else {
 		if g.nearapple {
-			ebitenutil.DebugPrint(screen, fmt.Sprintf("Level: %d Score: %d Near", g.Level, g.Score))
+			ebitenutil.DebugPrint(screen, fmt.Sprintf("FPS: %0.2f Level: %d Score: %d Best Score: %d Near", ebiten.CurrentFPS(), g.Level, g.Score, g.bestScore))
 		} else {
-			ebitenutil.DebugPrint(screen, fmt.Sprintf("Level: %d Score: %d", g.Level, g.Score))
+			ebitenutil.DebugPrint(screen, fmt.Sprintf("FPS: %0.2f Level: %d Score: %d Best Score: %d", ebiten.CurrentFPS(), g.Level, g.Score, g.bestScore))
 		}
 		if g.soundEnable {
 			g.audioPlayerBackground.Play()
@@ -499,6 +502,32 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return screenWidth, screenHeight
 }
 
+func init() {
+	// b, err := ioutil.ReadFile("ragtime.ogg")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// ------------------------------------------------------------------------------
+	// To be removed, only using it right now to have an in memory font file
+	// f, err := os.Create("ragtimeSoundBackground.go")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// a := `package main
+
+	// // RagtimeSoundBackground ...
+	// var RagtimeSoundBackground = []byte{`
+	// f.WriteString(a)
+	// for _, v := range b {
+	// 	s := strconv.Itoa(int(v))
+	// 	f.Write([]byte(s))
+	// 	f.Write([]byte{',', ' '})
+	// }
+	// f.Write([]byte{'}'})
+	// f.Write([]byte{'\n'})
+	// ------------------------------------------------------------------------------
+}
+
 func (g *Game) setupAudio() error {
 	var err error
 	// Initialize audio context.
@@ -507,23 +536,13 @@ func (g *Game) setupAudio() error {
 		log.Fatal(err)
 	}
 
-	f, err := os.Open("jab.wav")
-	if err != nil {
-		return err
-	}
-
-	f2, err := os.Open("crunchWav.wav")
-	if err != nil {
-		return err
-	}
-
 	// Decode wav-formatted data and retrieve decoded PCM stream.
-	d, err := wav.Decode(g.audioContext, f)
+	d, err := wav.Decode(g.audioContext, audio.BytesReadSeekCloser(JabSoundEffect))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	d2, err := wav.Decode(g.audioContext, f2)
+	d2, err := wav.Decode(g.audioContext, audio.BytesReadSeekCloser(CrunchSoundEffect))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -541,40 +560,40 @@ func (g *Game) setupAudio() error {
 	}
 
 	// Music notes ==================================
-	A5, err := os.Open("A5vH16.wav")
-	if err != nil {
-		log.Fatal(err)
-	}
+	// A5, err := os.Open("A5vH16.wav")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	a5, err := wav.Decode(g.audioContext, A5)
-	if err != nil {
-		log.Fatal(err)
-	}
-	g.a5NotePlayer, err = audio.NewPlayer(g.audioContext, a5)
-	if err != nil {
-		log.Fatal(err)
-	}
-	g.a5NotePlayer.SetVolume(0.1)
-	B5, _ := os.Open("B5vH16.wav")
-	b5, _ := wav.Decode(g.audioContext, B5)
-	g.b5NotePlayer, _ = audio.NewPlayer(g.audioContext, b5)
-	g.b5NotePlayer.SetVolume(0.1)
-	C5, _ := os.Open("C5vH16.wav")
-	c5, _ := wav.Decode(g.audioContext, C5)
-	g.c5NotePlayer, _ = audio.NewPlayer(g.audioContext, c5)
-	g.c5NotePlayer.SetVolume(0.1)
-	D5, _ := os.Open("D#5vH16.wav")
-	d5, _ := wav.Decode(g.audioContext, D5)
-	g.d5NotePlayer, _ = audio.NewPlayer(g.audioContext, d5)
-	g.d5NotePlayer.SetVolume(0.1)
+	// a5, err := wav.Decode(g.audioContext, A5)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// g.a5NotePlayer, err = audio.NewPlayer(g.audioContext, a5)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// g.a5NotePlayer.SetVolume(0.1)
+	// B5, _ := os.Open("B5vH16.wav")
+	// b5, _ := wav.Decode(g.audioContext, B5)
+	// g.b5NotePlayer, _ = audio.NewPlayer(g.audioContext, b5)
+	// g.b5NotePlayer.SetVolume(0.1)
+	// C5, _ := os.Open("C5vH16.wav")
+	// c5, _ := wav.Decode(g.audioContext, C5)
+	// g.c5NotePlayer, _ = audio.NewPlayer(g.audioContext, c5)
+	// g.c5NotePlayer.SetVolume(0.1)
+	// D5, _ := os.Open("D#5vH16.wav")
+	// d5, _ := wav.Decode(g.audioContext, D5)
+	// g.d5NotePlayer, _ = audio.NewPlayer(g.audioContext, d5)
+	// g.d5NotePlayer.SetVolume(0.1)
 	// ==================================
-	// Infinite loop background music ============================
-	f3, err := os.Open("ragtime.ogg")
-	if err != nil {
-		return err
-	}
+	// Infinite loop background music
+	// f3, err := os.Open("ragtime.ogg")
+	// if err != nil {
+	// 	return err
+	// }
 	// oggS, err := vorbis.Decode(g.audioContext, audio.BytesReadSeekCloser(audio.Ragtime_ogg))
-	oggS, err := vorbis.Decode(g.audioContext, f3)
+	oggS, err := vorbis.Decode(g.audioContext, audio.BytesReadSeekCloser(RagtimeSoundBackground))
 	if err != nil {
 		return err
 	}
@@ -607,7 +626,7 @@ func main() {
 	// ===============================
 
 	// Snake image ========================
-	g.snakeImage, _, _ = ebitenutil.NewImageFromFile("snake2.jpg", ebiten.FilterDefault)
+	g.snakeImage, _, _ = ebitenutil.NewImageFromFile("snake2.png", ebiten.FilterDefault)
 	g.snakeSkin, _, _ = ebitenutil.NewImageFromFile("skin.png", ebiten.FilterLinear)
 	g.snakeHead, _, _ = ebitenutil.NewImageFromFile("snakeHead.png", ebiten.FilterLinear)
 	g.snakeHeadDown, _, _ = ebitenutil.NewImageFromFile("snakeHeadDown.png", ebiten.FilterLinear)
