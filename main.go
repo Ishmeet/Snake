@@ -379,10 +379,10 @@ func (g *Game) Update(screen *ebiten.Image) error {
 
 	// g.comeOutOtherEnd()
 	if g.wallCollision() {
-		if g.soundEnable {
-			g.audioPlayer.Rewind()
-			g.audioPlayer.Play()
-		}
+		// if g.soundEnable {
+		g.audioPlayer.Rewind()
+		g.audioPlayer.Play()
+		// }
 		g.reset()
 	}
 
