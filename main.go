@@ -5,7 +5,6 @@ import (
 	"image/color"
 	_ "image/jpeg"
 	"log"
-	"math"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten"
@@ -474,19 +473,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	op.GeoM.Translate((screenWidth/2)+float64(g.AppleX), (screenHeight/2)+float64(g.AppleY))
 	screen.DrawImage(g.apple, op)
 
-	if true {
-		w, h := g.spriteImage.Size()
-		for i := 0; i < g.s.num; i++ {
-			s := g.s.sprites[i]
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Reset()
-			op.GeoM.Translate(-float64(w)/2, -float64(h)/2)
-			op.GeoM.Rotate(2 * math.Pi * float64(s.angle) / maxAngle)
-			op.GeoM.Translate(float64(w)/2, float64(h)/2)
-			op.GeoM.Translate(float64(s.x), float64(s.y))
-			screen.DrawImage(g.spriteImage, op)
-		}
-	}
+	// if true {
+	// 	w, h := g.spriteImage.Size()
+	// 	for i := 0; i < g.s.num; i++ {
+	// 		s := g.s.sprites[i]
+	// 		op := &ebiten.DrawImageOptions{}
+	// 		op.GeoM.Reset()
+	// 		op.GeoM.Translate(-float64(w)/2, -float64(h)/2)
+	// 		op.GeoM.Rotate(2 * math.Pi * float64(s.angle) / maxAngle)
+	// 		op.GeoM.Translate(float64(w)/2, float64(h)/2)
+	// 		op.GeoM.Translate(float64(s.x), float64(s.y))
+	// 		screen.DrawImage(g.spriteImage, op)
+	// 	}
+	// }
 }
 
 func backgroundColor(screen *ebiten.Image) {
@@ -637,27 +636,27 @@ func main() {
 	// ===========================
 
 	// Sprites ===========================
-	g.spriteImage, _ = ebiten.NewImage(1, 2, ebiten.FilterDefault)
-	op := &ebiten.DrawImageOptions{}
-	op.ColorM.Scale(1, 1, 1, 0.5)
-	g.spriteImage.DrawImage(emptyImage, op)
-	g.s.sprites = make([]*Sprite, 100)
-	g.s.num = 10
-	for i := range g.s.sprites {
-		w, h := g.spriteImage.Size()
-		x, y := rand.Intn(screenWidth-w), rand.Intn(screenHeight-h)
-		vx, vy := 2*rand.Intn(2)-1, 2*rand.Intn(2)-1
-		a := rand.Intn(maxAngle)
-		g.s.sprites[i] = &Sprite{
-			imageWidth:  w,
-			imageHeight: h,
-			x:           x,
-			y:           y,
-			vx:          vx,
-			vy:          vy,
-			angle:       a,
-		}
-	}
+	// g.spriteImage, _ = ebiten.NewImage(1, 2, ebiten.FilterDefault)
+	// op := &ebiten.DrawImageOptions{}
+	// op.ColorM.Scale(1, 1, 1, 0.5)
+	// g.spriteImage.DrawImage(emptyImage, op)
+	// g.s.sprites = make([]*Sprite, 100)
+	// g.s.num = 10
+	// for i := range g.s.sprites {
+	// 	w, h := g.spriteImage.Size()
+	// 	x, y := rand.Intn(screenWidth-w), rand.Intn(screenHeight-h)
+	// 	vx, vy := 2*rand.Intn(2)-1, 2*rand.Intn(2)-1
+	// 	a := rand.Intn(maxAngle)
+	// 	g.s.sprites[i] = &Sprite{
+	// 		imageWidth:  w,
+	// 		imageHeight: h,
+	// 		x:           x,
+	// 		y:           y,
+	// 		vx:          vx,
+	// 		vy:          vy,
+	// 		angle:       a,
+	// 	}
+	// }
 	// ===========================
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
