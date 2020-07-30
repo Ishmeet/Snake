@@ -233,7 +233,7 @@ func (g *Game) turnFunction(dir1 int8, dir2 int8, moveDirection int8) {
 func (g *Game) reset() {
 	g.AppleX = 30
 	g.AppleY = 30
-	g.speed = 5 // means 83.33 ms
+	g.speed = 4 // means 83.33 ms
 	l := len(g.scalesLoc)
 	for i := int64(1); i < int64(l); i++ {
 		delete(g.scalesLoc, i)
@@ -285,7 +285,7 @@ func (g *Game) Update(screen *ebiten.Image) error {
 			} else if len(g.scalesLoc) > 29 {
 				g.Score += 500
 				g.Level = 5
-				g.speed = 1
+				g.speed = 2
 			} else {
 				g.Score += 10
 				g.Level = 1
@@ -385,9 +385,9 @@ func (g *Game) Update(screen *ebiten.Image) error {
 		g.reset()
 	}
 
-	for i := 0; i < g.s.num; i++ {
-		g.s.sprites[i].Update()
-	}
+	// for i := 0; i < g.s.num; i++ {
+	// 	g.s.sprites[i].Update()
+	// }
 
 	g.updateTimer()
 
@@ -398,7 +398,7 @@ func (g *Game) Update(screen *ebiten.Image) error {
 func (g *Game) Draw(screen *ebiten.Image) {
 
 	// backgroundColor(screen)
-	screen.Fill(color.RGBA{62, 66, 46, 1})
+	screen.Fill(color.RGBA{62, 66, 46, 100})
 
 	if g.moveDirection == 0 {
 		ebitenutil.DebugPrint(screen, fmt.Sprintf("Press up/down/left/right to start, M to Enable/Disable Sound"))
@@ -616,7 +616,7 @@ func main() {
 	ebiten.SetWindowTitle("Hungry-Snake")
 	// Game config ==========================
 	g := &Game{width: 10, height: 10, horizontal: 10, verticle: 10, AppleX: 30, AppleY: 30}
-	g.speed = 5 // means 100 ms
+	g.speed = 4 // means 100 ms
 	g.scalesLoc = make(map[int64]*Scale)
 	g.scalesLoc[0] = &Scale{X: 0, Y: 0}
 	g.turn2 = make(map[int64]*Turn)
