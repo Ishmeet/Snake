@@ -620,7 +620,7 @@ func main() {
 	g.scalesLoc[0] = &Scale{X: 0, Y: 0}
 	g.turn2 = make(map[int64]*Turn)
 	g.turnKey = 0
-	g.soundEnable = true
+	g.soundEnable = false
 	g.setupAudio()
 	// ===============================
 
