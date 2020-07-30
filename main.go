@@ -397,7 +397,8 @@ func (g *Game) Update(screen *ebiten.Image) error {
 // Draw ...
 func (g *Game) Draw(screen *ebiten.Image) {
 
-	backgroundColor(screen)
+	// backgroundColor(screen)
+	screen.Fill(color.RGBA{62, 66, 46, 1})
 
 	if g.moveDirection == 0 {
 		ebitenutil.DebugPrint(screen, fmt.Sprintf("Press up/down/left/right to start, M to Enable/Disable Sound"))
