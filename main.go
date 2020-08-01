@@ -15,7 +15,7 @@ import (
 const (
 	screenWidth  = 640
 	screenHeight = 480
-	gridSize     = 20
+	gridSize     = 10
 	xNumInScreen = screenWidth / gridSize
 	yNumInScreen = screenHeight / gridSize
 )
