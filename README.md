@@ -1,5 +1,5 @@
 # 2D Snake
-This is the popular snake game. Created on golang using ebiten engine.
+This is the popular snake game. Created on golang using ebiten engine. The motive was to understand Ebiten engine that is written on golang. (PR: https://github.com/hajimehoshi/ebiten/pull/1276)
 
 ![alt text](https://github.com/Ishmeet/Snake/blob/master/Snake-2D.png)
 
